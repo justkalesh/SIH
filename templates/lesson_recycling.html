@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Recycling{% endblock %}
+
+{% block content %}
+<div class="lesson-container">
+    <div class="lesson-header">
+        <h1><i class="fas fa-recycle me-2"></i> Recycling</h1>
+        <p class="mb-0">Learn how to properly recycle and reduce waste</p>
+        {% if completed %}
+        <span class="completed-badge mt-2"><i class="fas fa-check-circle me-1"></i> Completed</span>
+        {% endif %}
+    </div>
+
+    <div class="content-section">
+        <h3>Why Recycling Matters</h3>
+        <p>Recycling is the process of converting waste materials into new materials and objects. It's an alternative to conventional waste disposal that can save material and help lower greenhouse gas emissions.</p>
+        
+        <div class="text-center my-4">
+            <img src="https://images.unsplash.com/photo-1587334274527-ba54f0b5a357?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                 alt="Recycling bins" class="img-fluid rounded">
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h3>What Can Be Recycled?</h3>
+        <p>Not all materials are recyclable. Here's a quick guide:</p>
+        <ul>
+            <li><strong>Paper:</strong> Newspapers, magazines, office paper</li>
+            <li><strong>Cardboard:</strong> Boxes, packaging (flattened)</li>
+            <li><strong>Plastics:</strong> Bottles, containers (check local codes)</li>
+            <li><strong>Glass:</strong> Bottles and jars (clear, green, brown)</li>
+            <li><strong>Metals:</strong> Aluminum cans, tin cans</li>
+        </ul>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Always rinse containers before recycling to avoid contamination.
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h3>The Recycling Process</h3>
+        <p>Recycling involves several steps:</p>
+        <ol>
+            <li><strong>Collection:</strong> Materials are collected from homes and businesses</li>
+            <li><strong>Processing:</strong> Materials are sorted, cleaned, and prepared</li>
+            <li><strong>Manufacturing:</strong> Recycled materials are made into new products</li>
+            <li><strong>Purchase:</strong> Consumers buy products made from recycled materials</li>
+        </ol>
+    </div>
+
+    <div class="content-section">
+        <h3>Reduce and Reuse First</h3>
+        <p>Remember that recycling is just one part of the waste hierarchy. Before recycling, consider:</p>
+        <ul>
+            <li><strong>Reducing</strong> your consumption</li>
+            <li><strong>Reusing</strong> items when possible</li>
+            <li><strong>Repairing</strong> broken items instead of replacing them</li>
+        </ul>
+        
+        <div class="text-center my-4">
+            <img src="https://images.unsplash.com/photo-1595078475328-1ab05d0a6a0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                 alt="Reduce, reuse, recycle" class="img-fluid rounded">
+        </div>
+    </div>
+
+    <div class="text-center">
+        <button id="quiz-button" class="btn btn-success btn-lg">
+            <i class="fas fa-play-circle me-2"></i> Start Quiz
+        </button>
+        <p class="text-muted mt-3">Scroll to the bottom of the lesson to unlock the quiz</p>
+    </div>
+</div>
+
+<script>
+    // Set lesson ID for the JavaScript
+    const LESSON_ID = 1;
+    const LESSON_TOPIC = 'recycling';
+</script>
+{% endblock %}
