@@ -7,20 +7,78 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 0 15px rgba(0,0,0,0.1);
+            --success-color: #4CAF50;
+            --success-dark: #2E7D32;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+            --shadow: 0 0 15px rgba(0,0,0,0.3);
+            --success-color: #66bb6a;
+            --success-dark: #4caf50;
+        }
+        
+        /* Dark theme text fixes */
+        [data-theme="dark"] .text-muted {
+            color: #b0b0b0 !important;
+        }
+        
+        [data-theme="dark"] .alert-info {
+            background-color: rgba(13, 202, 240, 0.1);
+            border-color: rgba(13, 202, 240, 0.3);
+            color: #ffffff;
+        }
+        
+        [data-theme="dark"] .alert-info .fas {
+            color: #0dcaf0;
+        }
+        
+        [data-theme="dark"] .navbar-text {
+            color: rgba(255, 255, 255, 0.75) !important;
+        }
+        
+        [data-theme="dark"] .badge {
+            color: #ffffff;
+        }
+        
+        [data-theme="dark"] .btn-outline-light {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+        
+        [data-theme="dark"] .btn-outline-light:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
         body {
-            background-color: #f8f9fa;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .lesson-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .lesson-header {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            background: linear-gradient(135deg, var(--success-color), var(--success-dark));
             color: white;
             padding: 20px;
             border-radius: 10px 10px 0 0;
@@ -57,11 +115,47 @@
             box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
         }
         .completed-badge {
-            background-color: #4CAF50;
+            background-color: var(--success-color);
             color: white;
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 14px;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 50px;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+        
+        .back-btn {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 50px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+            text-decoration: none;
+            transform: translateX(-3px);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -74,7 +168,10 @@
             <a class="navbar-brand" href="#">
                 <i class="fas fa-leaf me-2"></i>EcoQuest
             </a>
-            <div class="navbar-nav ms-auto">
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="theme-toggle me-3" id="theme-toggle" title="Toggle theme">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
                 {% if current_user.is_authenticated %}
                 <span class="navbar-text me-3">
                     <i class="fas fa-coins me-1"></i> 
@@ -94,6 +191,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/lesson.js') }}"></script>
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const body = document.body;
+            
+            // Load saved theme or default to light
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            body.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-sun';
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                }
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

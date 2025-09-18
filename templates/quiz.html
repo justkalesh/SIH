@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.topic_name }} Quiz{% endblock %}
+
+{% block extra_css %}
+<style>
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+    }
+    
+    .quiz-header {
+        background: linear-gradient(135deg, var(--success-color), var(--success-dark));
+        color: white;
+        padding: 30px;
+        border-radius: 16px 16px 0 0;
+        margin: -30px -30px 30px -30px;
+        text-align: center;
+    }
+    
+    .question-card {
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover {
+        border-color: var(--success-color);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .question-number {
+        background: var(--success-color);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+    
+    .option {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+    
+    .option:hover {
+        border-color: var(--success-color);
+        background: rgba(76, 175, 80, 0.1);
+    }
+    
+    .option input[type="radio"] {
+        margin-right: 12px;
+        transform: scale(1.2);
+    }
+    
+    .option.selected {
+        border-color: var(--success-color);
+        background: rgba(76, 175, 80, 0.15);
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, var(--success-color), var(--success-dark));
+        border: none;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+    }
+    
+    .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .progress-info {
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .result-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .result-content {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        max-width: 500px;
+        margin: 20px;
+    }
+    
+    .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .score-excellent { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+    .score-good { background: linear-gradient(135deg, #8BC34A, #4CAF50); }
+    .score-fair { background: linear-gradient(135deg, #FFC107, #FF9800); }
+    .score-poor { background: linear-gradient(135deg, #FF5722, #D32F2F); }
+    
+    .clear-btn {
+        transition: all 0.3s ease;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+    
+    .clear-btn:hover {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+        color: white;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('view_lesson', lesson_id=1) }}" class="back-btn">
+    <i class="fas fa-arrow-left me-2"></i>Back to Lesson
+</a>
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1><i class="fas fa-question-circle me-2"></i>{{ quiz.topic_name }} Quiz</h1>
+        <p class="mb-0">Test your knowledge and earn XP!</p>
+    </div>
+    
+    <div class="progress-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>{{ questions|length }} questions</strong> • 
+        <span class="text-muted">10 XP per correct answer</span>
+    </div>
+    
+    <form id="quiz-form">
+        {% for question in questions %}
+        <div class="question-card">
+            <div class="d-flex align-items-start mb-3">
+                <div class="question-number">{{ loop.index }}</div>
+                <h4 class="mb-0 flex-grow-1">{{ question.question_text }}</h4>
+            </div>
+            
+            <div class="options">
+                <label class="option" for="q{{ question.id }}_a">
+                    <input type="radio" id="q{{ question.id }}_a" name="question_{{ question.id }}" value="a" required>
+                    <strong>A.</strong> {{ question.option_a }}
+                </label>
+                
+                <label class="option" for="q{{ question.id }}_b">
+                    <input type="radio" id="q{{ question.id }}_b" name="question_{{ question.id }}" value="b" required>
+                    <strong>B.</strong> {{ question.option_b }}
+                </label>
+                
+                <label class="option" for="q{{ question.id }}_c">
+                    <input type="radio" id="q{{ question.id }}_c" name="question_{{ question.id }}" value="c" required>
+                    <strong>C.</strong> {{ question.option_c }}
+                </label>
+                
+                <label class="option" for="q{{ question.id }}_d">
+                    <input type="radio" id="q{{ question.id }}_d" name="question_{{ question.id }}" value="d" required>
+                    <strong>D.</strong> {{ question.option_d }}
+                </label>
+                
+                <div class="text-end mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary clear-btn" data-question="{{ question.id }}">
+                        <i class="fas fa-eraser me-1"></i>Clear Response
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="text-center">
+            <button type="submit" class="submit-btn" id="submit-btn">
+                <i class="fas fa-paper-plane me-2"></i>Submit Quiz
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Result Modal -->
+<div class="result-modal" id="result-modal">
+    <div class="result-content">
+        <div class="score-circle" id="score-circle">
+            <span id="score-percentage">0%</span>
+        </div>
+        <h3 id="result-title">Quiz Complete!</h3>
+        <p id="result-message">You scored <strong id="score-text">0/0</strong></p>
+        <p class="text-success" id="xp-message"><i class="fas fa-coins me-1"></i> <strong id="xp-earned">0</strong> XP earned!</p>
+        <div class="mt-4">
+            <a href="{{ url_for('view_lesson', lesson_id=2) }}" class="btn btn-success me-2" id="next-lesson-btn">
+                <i class="fas fa-arrow-right me-1"></i>Next Lesson: Climate Change
+            </a>
+            <button class="btn btn-outline-success me-2" onclick="location.reload()">
+                <i class="fas fa-redo me-1"></i>Retake Quiz
+            </button>
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="fas fa-home me-1"></i>Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('quiz-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const resultModal = document.getElementById('result-modal');
+    
+    // Add click handlers for options
+    document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from siblings
+            const siblings = this.parentElement.querySelectorAll('.option');
+            siblings.forEach(sibling => sibling.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Check the radio button
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+    
+    // Clear button functionality
+    document.querySelectorAll('.clear-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const questionId = this.getAttribute('data-question');
+            const questionInputs = document.querySelectorAll(`input[name="question_${questionId}"]`);
+            const questionOptions = document.querySelectorAll(`input[name="question_${questionId}"]`).forEach(input => {
+                input.closest('.option').classList.remove('selected');
+            });
+            questionInputs.forEach(input => input.checked = false);
+        });
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Check if all questions are answered by counting unique question names
+        const allQuestions = document.querySelectorAll('input[type="radio"][name^="question_"]');
+        const questionNames = new Set();
+        const answeredQuestions = new Set();
+        
+        allQuestions.forEach(input => {
+            questionNames.add(input.name);
+            if (input.checked) {
+                answeredQuestions.add(input.name);
+            }
+        });
+        
+        if (questionNames.size !== answeredQuestions.size) {
+            alert(`Please answer all questions before submitting! You have answered ${answeredQuestions.size} out of ${questionNames.size} questions.`);
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        
+        // Submit form data
+        const formData = new FormData(form);
+        
+        fetch(`/submit_quiz/{{ quiz.id }}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showResult(data);
+            } else {
+                alert('Error submitting quiz. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting quiz. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Quiz';
+        });
+    });
+    
+    function showResult(data) {
+        const percentage = data.percentage;
+        const scoreCircle = document.getElementById('score-circle');
+        const scorePercentage = document.getElementById('score-percentage');
+        const resultTitle = document.getElementById('result-title');
+        const resultMessage = document.getElementById('result-message');
+        const scoreText = document.getElementById('score-text');
+        const xpEarned = document.getElementById('xp-earned');
+        
+        // Update score display
+        scorePercentage.textContent = percentage + '%';
+        scoreText.textContent = `${data.score}/${data.total}`;
+        xpEarned.textContent = data.xp_earned;
+        
+        // Update XP in navbar
+        const userXp = document.getElementById('user-xp');
+        if (userXp) {
+            userXp.textContent = data.total_xp;
+        }
+        
+        // Handle retake scenario
+        const xpMessage = document.getElementById('xp-message');
+        if (data.retake) {
+            xpMessage.innerHTML = '<i class="fas fa-info-circle me-1"></i> <strong>No XP earned</strong> - You\'ve already completed this quiz!';
+            xpMessage.className = 'text-info';
+        } else {
+            xpMessage.innerHTML = '<i class="fas fa-coins me-1"></i> <strong>' + data.xp_earned + '</strong> XP earned!';
+            xpMessage.className = 'text-success';
+        }
+        
+        // Set score circle color and title based on performance
+        scoreCircle.className = 'score-circle';
+        if (percentage >= 80) {
+            scoreCircle.classList.add('score-excellent');
+            resultTitle.textContent = 'Excellent Work! 🌟';
+            resultMessage.innerHTML = `Outstanding! You scored <strong>${data.score}/${data.total}</strong>`;
+        } else if (percentage >= 60) {
+            scoreCircle.classList.add('score-good');
+            resultTitle.textContent = 'Good Job! 👍';
+            resultMessage.innerHTML = `Well done! You scored <strong>${data.score}/${data.total}</strong>`;
+        } else if (percentage >= 40) {
+            scoreCircle.classList.add('score-fair');
+            resultTitle.textContent = 'Keep Learning! 📚';
+            resultMessage.innerHTML = `Not bad! You scored <strong>${data.score}/${data.total}</strong>`;
+        } else {
+            scoreCircle.classList.add('score-poor');
+            resultTitle.textContent = 'Try Again! 💪';
+            resultMessage.innerHTML = `You scored <strong>${data.score}/${data.total}</strong>. Review the lesson and try again!`;
+        }
+        
+        // Show modal
+        resultModal.style.display = 'flex';
+    }
+    
+    // Close modal when clicking outside
+    resultModal.addEventListener('click', function(e) {
+        if (e.target === resultModal) {
+            resultModal.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

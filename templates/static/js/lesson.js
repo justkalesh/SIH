@@ -42,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show quiz button
                 quizButton.style.display = 'block';
                 
+                // Add click handler to quiz button
+                quizButton.addEventListener('click', function() {
+                    window.location.href = `/quiz/${LESSON_ID}`;
+                });
+                
                 // Add confetti effect (optional)
                 createConfetti();
             } else {
@@ -59,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#FFC107', '#FF9800'];
         const container = document.querySelector('.lesson-container');
         
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 20; i++) {
             const confetti = document.createElement('div');
             confetti.style.position = 'absolute';
             confetti.style.width = '10px';
@@ -70,22 +75,21 @@ document.addEventListener('DOMContentLoaded', function() {
             confetti.style.left = '50%';
             confetti.style.opacity = '0';
             confetti.style.transform = 'translate(-50%, -50%)';
+            confetti.style.transition = 'all 2s ease-out';
             
             container.appendChild(confetti);
             
-            // Animate confetti
-            anime({
-                targets: confetti,
-                opacity: [0, 1],
-                translateX: () => anime.random(-200, 200),
-                translateY: () => anime.random(-200, 200),
-                scale: [0, 1],
-                duration: anime.random(1000, 2000),
-                easing: 'easeOutExpo',
-                complete: function(anim) {
-                    confetti.remove();
-                }
-            });
+            // Simple animation using CSS transitions
+            setTimeout(() => {
+                confetti.style.opacity = '1';
+                confetti.style.transform = `translate(${Math.random() * 400 - 200}px, ${Math.random() * 400 - 200}px)`;
+                confetti.style.scale = '1';
+            }, 10);
+            
+            // Remove after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 2000);
         }
     }
     

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        border-radius: 20px;
+        padding: 80px 40px;
+        text-align: center;
+        margin-bottom: 60px;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .stat-card {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 32px 24px;
+        height: 100%;
+        border-left: 6px solid var(--success-color);
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--success-color);
+        margin: 16px 0;
+    }
+    
+    .callout {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 40px;
+        margin-top: 50px;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn {
+        padding: 14px 28px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .section-spacing {
+        margin: 60px 0;
+    }
+    
+    .relaxed-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 24px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .hero .lead {
+        font-size: 1.3rem;
+        margin-bottom: 32px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    @media (max-width: 768px) {
+        .hero {
+            padding: 60px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+        
+        .hero .lead {
+            font-size: 1.1rem;
+        }
+        
+        .stat-card {
+            margin-bottom: 20px;
+        }
+        
+        .callout {
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="relaxed-container">
+    <div class="hero">
+        <h1 class="display-5 fw-bold">EcoQuest: Learn. Act. Transform.</h1>
+        <p class="lead mt-3 mb-4">Tackle today's biggest environmental challenges with bite‑size lessons and quizzes that build real‑world habits.</p>
+        <a href="{{ url_for('view_lesson', lesson_id=1) }}" class="btn btn-warning btn-lg cta-btn">
+            <i class="fas fa-play-circle me-2"></i>Start with Recycling Basics
+        </a>
+    </div>
+
+    <div class="section-spacing">
+        <div class="row g-4">
+    <div class="col-md-4">
+        <div class="stat-card h-100">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-cloud-showers-heavy text-success me-2"></i>
+                <h5 class="mb-0">Rising Carbon Footprint</h5>
+            </div>
+            <p class="text-muted mb-2">Global CO₂ emissions have grown ~60% since 1990.</p>
+            <div class="stat-value">37+ Gt CO₂/yr</div>
+            <small class="text-muted">Learn small daily actions that cut emissions.</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card h-100">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-dove text-success me-2"></i>
+                <h5 class="mb-0">Endangered Species</h5>
+            </div>
+            <p class="text-muted mb-2">Thousands of species face extinction risk due to habitat loss.</p>
+            <div class="stat-value">42,000+</div>
+            <small class="text-muted">Protect biodiversity with conscious choices.</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card h-100">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-hand-holding-water text-success me-2"></i>
+                <h5 class="mb-0">Drinkable Water</h5>
+            </div>
+            <p class="text-muted mb-2">Less than 1% of Earth's water is easily accessible fresh water.</p>
+            <div class="stat-value">~0.5–1%</div>
+            <small class="text-muted">Learn to conserve every drop.</small>
+        </div>
+        </div>
+    </div>
+
+    <div class="callout">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h5 class="mb-1">Turn awareness into action</h5>
+            <p class="mb-0 text-muted">Earn XP by completing lessons on recycling, climate, biodiversity and water. Track your impact and unlock quizzes.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('view_lesson', lesson_id=2) }}" class="btn btn-success cta-btn me-2"><i class="fas fa-seedling me-1"></i> Explore Climate</a>
+            <a href="{{ url_for('view_lesson', lesson_id=3) }}" class="btn btn-outline-success cta-btn"><i class="fas fa-frog me-1"></i> Biodiversity</a>
+        </div>
+    </div>
+    {% if not current_user.is_authenticated %}
+    <div class="mt-3">
+        <small class="text-muted">For demo: <a href="{{ url_for('mock_login', user_id=1) }}">log in</a> to save progress.</small>
+    </div>
+    {% endif %}
+    {% if current_user.is_authenticated %}
+    <div class="mt-3">
+        <span class="badge bg-success">Welcome back, {{ current_user.username }} — {{ current_user.total_xp }} XP</span>
+    </div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+

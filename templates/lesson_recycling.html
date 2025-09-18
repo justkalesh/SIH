@@ -3,6 +3,9 @@
 {% block title %}Recycling{% endblock %}
 
 {% block content %}
+<a href="{{ url_for('index') }}" class="back-btn">
+    <i class="fas fa-arrow-left me-2"></i>Back to Home
+</a>
 <div class="lesson-container">
     <div class="lesson-header">
         <h1><i class="fas fa-recycle me-2"></i> Recycling</h1>
@@ -17,8 +20,8 @@
         <p>Recycling is the process of converting waste materials into new materials and objects. It's an alternative to conventional waste disposal that can save material and help lower greenhouse gas emissions.</p>
         
         <div class="text-center my-4">
-            <img src="https://images.unsplash.com/photo-1587334274527-ba54f0b5a357?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                 alt="Recycling bins" class="img-fluid rounded">
+            <img src="https://pngimg.com/d/recycle_bin_PNG8.png" 
+                 alt="Recycling bins" class="img-fluid rounded" width="200" height="200">
         </div>
     </div>
 
@@ -60,16 +63,23 @@
         </ul>
         
         <div class="text-center my-4">
-            <img src="https://images.unsplash.com/photo-1595078475328-1ab05d0a6a0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                 alt="Reduce, reuse, recycle" class="img-fluid rounded">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/022/388/051/small_2x/world-environment-day-reduce-reuse-recycle-png.png" 
+                 alt="Reduce, reuse, recycle" class="img-fluid rounded" width="200" height="200">
         </div>
     </div>
 
     <div class="text-center">
-        <button id="quiz-button" class="btn btn-success btn-lg">
+        {% if completed %}
+        <a href="{{ url_for('take_quiz', quiz_id=1) }}" class="btn btn-success btn-lg">
+            <i class="fas fa-play-circle me-2"></i> Start Quiz
+        </a>
+        <p class="text-muted mt-3">🎉 Lesson completed! Take the quiz to earn more XP</p>
+        {% else %}
+        <button id="quiz-button" class="btn btn-success btn-lg" style="display: none;">
             <i class="fas fa-play-circle me-2"></i> Start Quiz
         </button>
         <p class="text-muted mt-3">Scroll to the bottom of the lesson to unlock the quiz</p>
+        {% endif %}
     </div>
 </div>
 
